@@ -1,0 +1,1 @@
+nvidia-smi | sed '/^.[=\-].*$/d' | sed '/^| *Proc.*$/d' | sed '/^. [GF]/d' | sed 's/^|\( *[0-9]*\).*N\/A.*$/  \1:/' | sed 's/|/ /g' | sed 's/Default//g' | sed 's/\n//g' | sed ':begin;$!N;/:\n/s/\n//;tbegin;P;D'
