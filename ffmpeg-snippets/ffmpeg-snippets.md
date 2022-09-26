@@ -1,3 +1,15 @@
+### Video meta-data
+
+```
+ffprobe {input_video}
+```
+
+For more information,
+
+```
+ffprobe -v verbose {input_video}
+```
+
 ### Extract frames from a video
 
 ```
