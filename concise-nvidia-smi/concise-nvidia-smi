@@ -1,1 +1,37 @@
-nvidia-smi | sed '/^.[=\-].*$/d' | sed '/^| *Proc.*$/d' | sed '/^. [GF]/d' | sed 's/^|\( *[0-9]*\).*N\/A.*$/  \1:/' | sed 's/|/ /g' | sed 's/Default//g' | sed 's/\n//g' | sed ':begin;$!N;/:\n/s/\n//;tbegin;P;D'
+#! /bin/sh
+
+# remove horizontal lines
+# remove 'Processes:' line
+# remove 'GPU  Name' and 'Fan  Temp' lines
+# replace NVIDIA ... with :
+# remove all |
+# remove all trailing N/A
+# remove all Default
+# remove MIG line
+# remove all trailing spaces
+# concat : line and next line
+# remove process section title line 1
+# replace process section title with blank
+
+nvidia-smi \
+| sed '/^.[=\-].*$/d' \
+| sed '/^| *Proc.*$/d' \
+| sed '/^. [GF]/d' \
+| sed 's/^|\( *[0-9]*\).*NVIDIA .*$/  \1:/' \
+| sed 's/|//g' \
+| sed 's/\s*N\/A\s*$//g' \
+| sed 's/Default//g' \
+| sed '/MIG/d' \
+| sed 's/ *$//g' \
+| sed '/^ *$/d' \
+| sed ':begin;$!N;/:\n/s/\n//;tbegin;P;D' \
+| sed '/^ * GPU/d' \
+| sed 's/^ *ID.*$//g'
+
+# watch -n 1 --no-title concise-nvidia-smi
+
+# Tested on NVIDIA-SMI 470.141.03
+
+# For more information, use
+# nvidia-smi --format=csv,nounits --query-gpu=index,pci.bus,pstate,fan.speed,memory.used,memory.total,memory.free,utilization.gpu,utilization.memory,temperature.gpu,power.draw,power.limit,clocks.current.sm,clocks.current.video,clocks.current.memory
+# nvidia-smi --format=csv --query-compute-apps=gpu_bus_id,pid,name,used_memory
